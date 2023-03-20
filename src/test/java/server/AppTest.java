@@ -2,15 +2,12 @@ package server;
 
 import static org.junit.Assert.assertTrue;
 
-import javafx.util.Pair;
 import org.junit.Test;
 import server.models.Course;
 import server.models.RegistrationForm;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
@@ -20,6 +17,7 @@ import java.util.Scanner;
  */
 public class AppTest 
 {
+    public final static String[] SESSIONS = new String[] { "Automne", "Hiver", "Ete" };
     /**
      * Rigorous Test :-)
      */
@@ -29,58 +27,64 @@ public class AppTest
         assertTrue( true );
     }
 
-    public static void main(String[] args) throws Exception {
-        String[] sessions = new String[] { "Automne", "Hiver", "Ete" };
-
+    public static void main(String[] args) {
         System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
-
         try (Scanner userIn = new Scanner(System.in)) {
             while (true) {
-                System.out.println("Veuillez choisir la session pout laquelle vous voulez consulter la liste des cours:");
-                 for (int index = 0; index < sessions.length; index++) {
-                    System.out.println((index + 1) + ". " + sessions[index]);
+                try {
+                    InteractUser(userIn);
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                    System.out.println();
                 }
+            }
+        }
+    }
 
-                System.out.print("> Choix: ");
-                int sessionChoice = Integer.parseInt(userIn.nextLine());
-                String sessionName = sessions[sessionChoice - 1];
+    private static void InteractUser(Scanner userIn) throws Exception {
+        System.out.println("Veuillez choisir la session pour laquelle vous voulez consulter la liste des cours:");
+        for (int index = 0; index < SESSIONS.length; index++) {
+            System.out.println((index + 1) + ". " + SESSIONS[index]);
+        }
 
-                List<Course> courses = (List<Course>) Request(Server.LOAD_COMMAND, sessionName);
+        System.out.print("> Choix: ");
+        int sessionChoice = Integer.parseInt(userIn.nextLine());
+        String sessionName = SESSIONS[sessionChoice - 1];
 
-                System.out.println("Les cours offerts pendant la session d'" + sessionName.toLowerCase() + " sont:");
-                for (int index = 0; index < courses.size(); index++) {
-                    Course course = courses.get(index);
-                    System.out.println((index + 1) + ". " + course.getCode() + "\t" + course.getName());
-                }
+        List<Course> courses = (List<Course>) Request(Server.LOAD_COMMAND, sessionName);
 
-                System.out.println("> Choix: ");
-                System.out.println("1. Consulter les cours offerts pour une autre session");
-                System.out.println("2. Inscription à un cours");
+        System.out.println("Les cours offerts pendant la session d'" + sessionName.toLowerCase() + " sont:");
+        for (int index = 0; index < courses.size(); index++) {
+            Course course = courses.get(index);
+            System.out.println((index + 1) + ". " + course.getCode() + "\t" + course.getName());
+        }
 
-                System.out.print("> Choix: ");
-                int choice = Integer.parseInt(userIn.nextLine());
+        System.out.println("> Choix: ");
+        System.out.println("1. Consulter les cours offerts pour une autre session");
+        System.out.println("2. Inscription à un cours");
 
-                if (choice == 2) {
-                    System.out.print("> Veuillez saisir votre prénom: ");
-                    String firstName = userIn.nextLine();
-                    System.out.print("> Veuillez saisir votre nom: ");
-                    String lastName = userIn.nextLine();
-                    System.out.print("> Veuillez saisir votre email: ");
-                    String email = userIn.nextLine();
-                    System.out.print("> Veuillez saisir votre matricule: ");
-                    String matricule = userIn.nextLine();
-                    System.out.print("> Veuillez saisir le code du cours: ");
-                    String code = userIn.nextLine();
+        System.out.print("> Choix: ");
+        int choice = Integer.parseInt(userIn.nextLine());
 
-                    RegistrationForm form = new RegistrationForm(firstName, lastName, email, matricule, new Course(null, code, sessionName));
-                    String message = (String) Request(Server.REGISTER_COMMAND, form);
+        if (choice == 2) {
+            System.out.print("> Veuillez saisir votre prénom: ");
+            String firstName = userIn.nextLine();
+            System.out.print("> Veuillez saisir votre nom: ");
+            String lastName = userIn.nextLine();
+            System.out.print("> Veuillez saisir votre email: ");
+            String email = userIn.nextLine();
+            System.out.print("> Veuillez saisir votre matricule: ");
+            String matricule = userIn.nextLine();
+            System.out.print("> Veuillez saisir le code du cours: ");
+            String code = userIn.nextLine();
 
-                    if (message.equals("OK")) {
-                        System.out.println("Félicitations! Inscription réussie de " + form.getPrenom() + " au cours " + form.getCourse().getCode());
-                    } else {
-                        System.out.println("L'inscription n'a pas réussie: " + message);
-                    }
-                }
+            RegistrationForm form = new RegistrationForm(firstName, lastName, email, matricule, new Course(null, code, sessionName));
+            String message = (String) Request(Server.REGISTER_COMMAND, form);
+
+            if (message.equals("OK")) {
+                System.out.println("Félicitations! Inscription réussie de " + form.getPrenom() + " au cours " + form.getCourse().getCode());
+            } else {
+                System.out.println("L'inscription n'a pas réussie: " + message);
             }
         }
     }
