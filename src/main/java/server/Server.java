@@ -90,15 +90,19 @@ public class Server {
      Lire un fichier texte contenant des informations sur les cours et les transofmer en liste d'objets 'Course'.
      La méthode filtre les cours par la session spécifiée en argument.
      Ensuite, elle renvoie la liste des cours pour une session au client en utilisant l'objet 'objectOutputStream'.
-     @param session la session pour laquelle on veut récupérer la liste des cours
+     @param sessionFilter la session pour laquelle on veut récupérer la liste des cours
      @throws Exception si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux
      */
-    public void handleLoadCourses(String session) throws Exception {
+    public void handleLoadCourses(String sessionFilter) throws Exception {
+        List<Course> courses = loadCourseList(sessionFilter);
+        objectOutputStream.writeObject(courses);
+        objectOutputStream.flush();
+    }
+
+    private List<Course> loadCourseList(String sessionFilter) throws Exception {
         File database = new File(DATABASE_PATH + "/cours.txt");
         try (Scanner scanner = new Scanner(new FileInputStream(database))) {
-            List<Course> courses = parseCourseList(scanner, session);
-            objectOutputStream.writeObject(courses);
-            objectOutputStream.flush();
+            return parseCourseList(scanner, sessionFilter);
         }
     }
 
@@ -132,17 +136,37 @@ public class Server {
      */
     public void handleRegistration() throws Exception {
         RegistrationForm form = (RegistrationForm) objectInputStream.readObject();
+        String message = RegisterCourse(form);
+        objectOutputStream.writeObject(message);
+        objectOutputStream.flush();
+    }
 
+    private String RegisterCourse(RegistrationForm form) throws Exception {
+        if (CourseExists(form.getCourse())) {
+            SaveRegistration(form);
+            return "OK";
+        }
+        return "NO";
+    }
+
+    private void SaveRegistration(RegistrationForm form) throws IOException {
         boolean append = true;
         File database = new File(DATABASE_PATH + "/inscription.txt");
         try (PrintWriter out = new PrintWriter(new FileWriter(database, append))) {
             String line = serializeRegistration(form);
             out.println(line);
             out.flush();
-
-            objectOutputStream.writeObject("OK");
-            objectOutputStream.flush();
         }
+    }
+
+    private boolean CourseExists(Course chosenCourse) throws Exception {
+        List<Course> availableCourses = loadCourseList(chosenCourse.getSession());
+        for (Course availableCourse : availableCourses) {
+            if (availableCourse.getCode().equals(chosenCourse.getCode())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String serializeRegistration(RegistrationForm form) {
