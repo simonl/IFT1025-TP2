@@ -7,6 +7,7 @@ import org.junit.Test;
 import server.models.Course;
 import server.models.RegistrationForm;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -29,45 +30,84 @@ public class AppTest
     }
 
     public static void main(String[] args) throws Exception {
+        String[] sessions = new String[] { "Automne", "Hiver", "Ete" };
+
+        System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
+
         try (Scanner userIn = new Scanner(System.in)) {
             while (true) {
-                System.out.print(">>> ");
-                String commandLine = userIn.nextLine();
-                String[] words = commandLine.split(" ");
+                System.out.println("Veuillez choisir la session pout laquelle vous voulez consulter la liste des cours:");
+                 for (int index = 0; index < sessions.length; index++) {
+                    System.out.println((index + 1) + ". " + sessions[index]);
+                }
 
-                try (Socket client = new Socket("localhost", ServerLauncher.PORT)) {
-                    ObjectOutputStream serverOut = new ObjectOutputStream(client.getOutputStream());
-                    ObjectInputStream serverIn = new ObjectInputStream(client.getInputStream());
+                System.out.print("> Choix: ");
+                int sessionChoice = Integer.parseInt(userIn.nextLine());
+                String sessionName = sessions[sessionChoice - 1];
 
-                    switch (words[0]) {
-                        case Server.LOAD_COMMAND: {
-                            serverOut.writeObject(words[0] + " " + words[1]);
-                            serverOut.flush();
+                List<Course> courses = (List<Course>) Request(Server.LOAD_COMMAND, sessionName);
 
-                            List<Course> courses = (List<Course>) serverIn.readObject();
-                            for (Course course : courses) {
-                                System.out.println(course.getCode() + " " + course.getName() + " " + course.getSession());
-                            }
+                System.out.println("Les cours offerts pendant la session d'" + sessionName.toLowerCase() + " sont:");
+                for (int index = 0; index < courses.size(); index++) {
+                    Course course = courses.get(index);
+                    System.out.println((index + 1) + ". " + course.getCode() + "\t" + course.getName());
+                }
 
-                            break;
-                        }
-                        case Server.REGISTER_COMMAND: {
-                            serverOut.writeObject(words[0]);
-                            serverOut.flush();
+                System.out.println("> Choix: ");
+                System.out.println("1. Consulter les cours offerts pour une autre session");
+                System.out.println("2. Inscription à un cours");
 
-                            RegistrationForm form = new RegistrationForm(words[1], words[2], words[3], words[4], new Course(null, words[5], words[6]));
-                            serverOut.writeObject(form);
-                            serverOut.flush();
+                System.out.print("> Choix: ");
+                int choice = Integer.parseInt(userIn.nextLine());
 
-                            String message = (String) serverIn.readObject();
-                            System.out.println(message);
+                if (choice == 2) {
+                    System.out.print("> Veuillez saisir votre prénom: ");
+                    String firstName = userIn.nextLine();
+                    System.out.print("> Veuillez saisir votre nom: ");
+                    String lastName = userIn.nextLine();
+                    System.out.print("> Veuillez saisir votre email: ");
+                    String email = userIn.nextLine();
+                    System.out.print("> Veuillez saisir votre matricule: ");
+                    String matricule = userIn.nextLine();
+                    System.out.print("> Veuillez saisir le code du cours: ");
+                    String code = userIn.nextLine();
 
-                            break;
-                        }
-                        default:
-                            throw new IllegalArgumentException(words[0]);
+                    RegistrationForm form = new RegistrationForm(firstName, lastName, email, matricule, new Course(null, code, sessionName));
+                    String message = (String) Request(Server.REGISTER_COMMAND, form);
+
+                    if (message.equals("OK")) {
+                        System.out.println("Félicitations! Inscription réussie de " + form.getPrenom() + " au cours " + form.getCourse().getCode());
+                    } else {
+                        System.out.println("L'inscription n'a pas réussie: " + message);
                     }
                 }
+            }
+        }
+    }
+
+    private static Object Request(String command, Object arg) throws Exception {
+        try (Socket client = new Socket("localhost", ServerLauncher.PORT)) {
+            ObjectOutputStream serverOut = new ObjectOutputStream(client.getOutputStream());
+            ObjectInputStream serverIn = new ObjectInputStream(client.getInputStream());
+
+            switch (command) {
+                case Server.LOAD_COMMAND: {
+                    serverOut.writeObject(command + " " + arg);
+                    serverOut.flush();
+
+                    return serverIn.readObject();
+                }
+                case Server.REGISTER_COMMAND: {
+                    serverOut.writeObject(command);
+                    serverOut.flush();
+
+                    serverOut.writeObject((RegistrationForm) arg);
+                    serverOut.flush();
+
+                    return serverIn.readObject();
+                }
+                default:
+                    throw new IllegalArgumentException(command);
             }
         }
     }
