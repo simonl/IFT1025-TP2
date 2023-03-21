@@ -41,7 +41,7 @@ public class Console {
         String sessionName = SESSIONS[sessionChoice - 1];
         System.out.println();
 
-        List<Course> courses = (List<Course>) Request(Server.LOAD_COMMAND, sessionName);
+        List<Course> courses = Load(sessionName);
 
         System.out.println("Veuillez choisir un cours auquel vous inscrire pour la session d'" + sessionName.toLowerCase() + ":");
         for (int index = 0; index < courses.size(); index++) {
@@ -71,7 +71,7 @@ public class Console {
         System.out.println();
 
         RegistrationForm form = new RegistrationForm(firstName, lastName, email, matricule, new Course(null, courseCode, sessionName));
-        String message = (String) Request(Server.REGISTER_COMMAND, form);
+        String message = Register(form);
 
         if (message.equals("OK")) {
             System.out.println("Félicitations! Inscription réussie de " + form.getPrenom() + " au cours " + form.getCourse().getCode());
@@ -80,6 +80,29 @@ public class Console {
             System.out.println("L'inscription n'a pas réussie: " + message);
             System.out.println();
         }
+    }
+
+    /**
+     * Demander au Serveur la liste de cours disponible durant la session donnée.
+     *
+     * @param session la session pour laquelle on veut récupérer la liste des cours
+     * @return la liste de cours disponibles durant la session donnée
+     * @throws Exception si une erreur se produit avec la communication réseau
+     */
+    public static List<Course> Load(String session) throws Exception {
+        return (List<Course>) Request(Server.LOAD_COMMAND, session);
+    }
+
+    /**
+     * Demander au Serveur d'inscrire un étudiant à un cours.
+     * Le cours choisi doit déjà exister dans la liste de cours pour la session donnée.
+     *
+     * @param form les détails de l'étudiant et du cours choisi
+     * @return Un message de succès "OK" ou un message d'erreur provenant du Serveur
+     * @throws Exception si une erreur se produit avec la communication réseau
+     */
+    public static String Register(RegistrationForm form) throws Exception {
+        return (String) Request(Server.REGISTER_COMMAND, form);
     }
 
     private static Object Request(String command, Object arg) throws Exception {
@@ -98,7 +121,7 @@ public class Console {
                     serverOut.writeObject(command);
                     serverOut.flush();
 
-                    serverOut.writeObject((RegistrationForm) arg);
+                    serverOut.writeObject(arg);
                     serverOut.flush();
 
                     return serverIn.readObject();
