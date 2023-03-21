@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.util.*;
 
 public class Server {
-    public final static String DATABASE_PATH = "./src/main/java/server/data";
     public final static String REGISTER_COMMAND = "INSCRIRE";
     public final static String LOAD_COMMAND = "CHARGER";
     private final ServerSocket server;
@@ -91,43 +90,13 @@ public class Server {
      */
     public void handleLoadCourses(String arg) {
         try {
-            List<Course> courses = loadCourseList(arg);
+            List<Course> courses = Database.loadCourseList(arg);
             objectOutputStream.writeObject(courses);
             objectOutputStream.flush();
         } catch (Exception e) {
             // Abandonner l'opération.
             // Le client ne recevra pas de résultat.
         }
-    }
-
-    private List<Course> loadCourseList(String sessionFilter) throws Exception {
-        File database = new File(DATABASE_PATH + "/cours.txt");
-        try (Scanner scanner = new Scanner(new FileInputStream(database))) {
-            return parseCourseList(scanner, sessionFilter);
-        }
-    }
-
-    private List<Course> parseCourseList(Scanner scanner, String sessionFilter) {
-        List<Course> courses = new ArrayList<Course>();
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            Course course = parseCourse(line);
-            if (course.getSession().equals(sessionFilter)) {
-                courses.add(course);
-            }
-        }
-        return courses;
-    }
-
-    private Course parseCourse(String line) {
-        Scanner scanner = new Scanner(line);
-        scanner.useDelimiter("\t");
-
-        String code = scanner.next();
-        String name = scanner.next();
-        String session = scanner.next();
-
-        return new Course(name, code, session);
     }
 
     /**
@@ -138,54 +107,13 @@ public class Server {
     public void handleRegistration() {
         try {
             RegistrationForm form = (RegistrationForm) objectInputStream.readObject();
-            String message = RegisterCourse(form);
+            String message = Database.registerCourse(form);
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
         } catch (Exception e) {
             // Abandonner l'opération.
             // Le client ne recevra pas de résultat.
         }
-    }
-
-    private String RegisterCourse(RegistrationForm form) throws Exception {
-        if (CourseExists(form.getCourse())) {
-            SaveRegistration(form);
-            return "OK";
-        }
-        return "NO";
-    }
-
-    private void SaveRegistration(RegistrationForm form) throws IOException {
-        boolean append = true;
-        File database = new File(DATABASE_PATH + "/inscription.txt");
-        try (PrintWriter out = new PrintWriter(new FileWriter(database, append))) {
-            String line = serializeRegistration(form);
-            out.println(line);
-            out.flush();
-        }
-    }
-
-    private boolean CourseExists(Course chosenCourse) throws Exception {
-        List<Course> availableCourses = loadCourseList(chosenCourse.getSession());
-        for (Course availableCourse : availableCourses) {
-            if (availableCourse.getCode().equals(chosenCourse.getCode())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static String serializeRegistration(RegistrationForm form) {
-        String[] fields = new String[] {
-                form.getCourse().getSession(),
-                form.getCourse().getCode(),
-                form.getMatricule(),
-                form.getPrenom(),
-                form.getNom(),
-                form.getEmail()
-        };
-
-        return String.join("\t", fields);
     }
 }
 
