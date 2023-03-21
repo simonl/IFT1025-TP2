@@ -29,6 +29,8 @@ public class AppTest
 
     public static void main(String[] args) {
         System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
+        System.out.println();
+
         try (Scanner userIn = new Scanner(System.in)) {
             while (true) {
                 try {
@@ -50,42 +52,46 @@ public class AppTest
         System.out.print("> Choix: ");
         int sessionChoice = Integer.parseInt(userIn.nextLine());
         String sessionName = SESSIONS[sessionChoice - 1];
+        System.out.println();
 
         List<Course> courses = (List<Course>) Request(Server.LOAD_COMMAND, sessionName);
 
-        System.out.println("Les cours offerts pendant la session d'" + sessionName.toLowerCase() + " sont:");
+        System.out.println("Veuillez choisir un cours auquel vous inscrire pour la session d'" + sessionName.toLowerCase() + ":");
         for (int index = 0; index < courses.size(); index++) {
             Course course = courses.get(index);
             System.out.println((index + 1) + ". " + course.getCode() + "\t" + course.getName());
         }
-
-        System.out.println("> Choix: ");
-        System.out.println("1. Consulter les cours offerts pour une autre session");
-        System.out.println("2. Inscription à un cours");
+        System.out.println("0. Consulter les cours offerts pour une autre session");
 
         System.out.print("> Choix: ");
-        int choice = Integer.parseInt(userIn.nextLine());
+        int courseChoice = Integer.parseInt(userIn.nextLine());
+        System.out.println();
 
-        if (choice == 2) {
-            System.out.print("> Veuillez saisir votre prénom: ");
-            String firstName = userIn.nextLine();
-            System.out.print("> Veuillez saisir votre nom: ");
-            String lastName = userIn.nextLine();
-            System.out.print("> Veuillez saisir votre email: ");
-            String email = userIn.nextLine();
-            System.out.print("> Veuillez saisir votre matricule: ");
-            String matricule = userIn.nextLine();
-            System.out.print("> Veuillez saisir le code du cours: ");
-            String code = userIn.nextLine();
+        if (courseChoice == 0) {
+            return;
+        }
 
-            RegistrationForm form = new RegistrationForm(firstName, lastName, email, matricule, new Course(null, code, sessionName));
-            String message = (String) Request(Server.REGISTER_COMMAND, form);
+        String courseCode = courses.get(courseChoice - 1).getCode();
 
-            if (message.equals("OK")) {
-                System.out.println("Félicitations! Inscription réussie de " + form.getPrenom() + " au cours " + form.getCourse().getCode());
-            } else {
-                System.out.println("L'inscription n'a pas réussie: " + message);
-            }
+        System.out.print("> Veuillez saisir votre prénom: ");
+        String firstName = userIn.nextLine();
+        System.out.print("> Veuillez saisir votre nom: ");
+        String lastName = userIn.nextLine();
+        System.out.print("> Veuillez saisir votre email: ");
+        String email = userIn.nextLine();
+        System.out.print("> Veuillez saisir votre matricule: ");
+        String matricule = userIn.nextLine();
+        System.out.println();
+
+        RegistrationForm form = new RegistrationForm(firstName, lastName, email, matricule, new Course(null, courseCode, sessionName));
+        String message = (String) Request(Server.REGISTER_COMMAND, form);
+
+        if (message.equals("OK")) {
+            System.out.println("Félicitations! Inscription réussie de " + form.getPrenom() + " au cours " + form.getCourse().getCode());
+            System.out.println();
+        } else {
+            System.out.println("L'inscription n'a pas réussie: " + message);
+            System.out.println();
         }
     }
 
