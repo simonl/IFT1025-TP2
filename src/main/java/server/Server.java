@@ -75,14 +75,10 @@ public class Server {
     }
 
     public void handleEvents(String cmd, String arg) {
-        try {
-            if (cmd.equals(REGISTER_COMMAND)) {
-                handleRegistration();
-            } else if (cmd.equals(LOAD_COMMAND)) {
-                handleLoadCourses(arg);
-            }
-        } catch (Exception ex) {
-            // Ignore File errors ???
+        if (cmd.equals(REGISTER_COMMAND)) {
+            handleRegistration();
+        } else if (cmd.equals(LOAD_COMMAND)) {
+            handleLoadCourses(arg);
         }
     }
 
@@ -91,12 +87,17 @@ public class Server {
      La méthode filtre les cours par la session spécifiée en argument.
      Ensuite, elle renvoie la liste des cours pour une session au client en utilisant l'objet 'objectOutputStream'.
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
-     @param sessionFilter la session pour laquelle on veut récupérer la liste des cours
+     @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String sessionFilter) throws Exception {
-        List<Course> courses = loadCourseList(sessionFilter);
-        objectOutputStream.writeObject(courses);
-        objectOutputStream.flush();
+    public void handleLoadCourses(String arg) {
+        try {
+            List<Course> courses = loadCourseList(arg);
+            objectOutputStream.writeObject(courses);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+            // Abandonner l'opération.
+            // Le client ne recevra pas de résultat.
+        }
     }
 
     private List<Course> loadCourseList(String sessionFilter) throws Exception {
@@ -134,11 +135,16 @@ public class Server {
      et renvoyer un message de confirmation au client.
      La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
-    public void handleRegistration() throws Exception {
-        RegistrationForm form = (RegistrationForm) objectInputStream.readObject();
-        String message = RegisterCourse(form);
-        objectOutputStream.writeObject(message);
-        objectOutputStream.flush();
+    public void handleRegistration() {
+        try {
+            RegistrationForm form = (RegistrationForm) objectInputStream.readObject();
+            String message = RegisterCourse(form);
+            objectOutputStream.writeObject(message);
+            objectOutputStream.flush();
+        } catch (Exception e) {
+            // Abandonner l'opération.
+            // Le client ne recevra pas de résultat.
+        }
     }
 
     private String RegisterCourse(RegistrationForm form) throws Exception {
