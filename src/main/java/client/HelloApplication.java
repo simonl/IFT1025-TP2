@@ -18,9 +18,11 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import server.models.Course;
 
 
 import java.io.IOException;
+import java.util.List;
 
 public class HelloApplication extends Application {
     @Override
@@ -97,10 +99,13 @@ public class HelloApplication extends Application {
         //grilleCours.setAlignment(text2, Pos.CENTER);
         GridPane.setConstraints(text2, 0, 0);
 
-        TableView tableView = new TableView<String>();
+        tableView = new TableView<String>();
+        tableView.setEditable(false);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn code = new TableColumn("Code");
+        code.setCellValueFactory(new PropertyValueFactory<Course, String>("code"));
         TableColumn cours = new TableColumn("Cours");
+        cours.setCellValueFactory(new PropertyValueFactory<Course, String>("name"));
         tableView.getColumns().addAll(code, cours);
         GridPane.setConstraints(tableView, 0,1);
 
@@ -109,7 +114,7 @@ public class HelloApplication extends Application {
         ColumnConstraints cButton = new ColumnConstraints();
         cButton.setPercentWidth(50);
 
-        Button charger = new Button("Charger");
+        charger = new Button("Charger");
         GridPane.setConstraints(charger, 1, 0);
 
         //GridPane.setHalignment(charger, HPos.CENTER);
@@ -121,7 +126,8 @@ public class HelloApplication extends Application {
                         "Automne"
                 );
 
-        ComboBox periode = new ComboBox(periodes);
+        periode = new ComboBox(periodes);
+        periode.getItems().add("Hello");
         GridPane.setConstraints(periode,0,0);
 
         charger.setOnAction(e -> setText(periode));
@@ -150,8 +156,22 @@ public class HelloApplication extends Application {
     String choixPeriodes;
     TableColumn cours;
     TableColumn codeCours;
+    TableView tableView;
+    Button charger;
+    ComboBox periode;
+
     public void setText(ComboBox choixPeriode){
         this.choixPeriodes = (String) choixPeriode.getValue();
+
+
+        try {
+            List<Course> listeCours = Console.Load((String) periode.getValue());
+            tableView.getItems().clear();
+            tableView.getItems().addAll(listeCours);
+            //vue.displayCourses((String) listeCours.get(1), );
+        } catch (Exception exception){
+
+        }
     }
 
     public String getChoixPeriodes() {
