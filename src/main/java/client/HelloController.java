@@ -17,11 +17,14 @@ public class HelloController {
     public HelloController(HelloApplication vue, Console console) {
         this.vue = vue;
         this.console = console;
+
+        vue.charger.setOnAction(e -> getCourses());
     }
 
     public void getCourses(){
         try {
-            List<Course> listeCours = console.Load(vue.getChoixPeriodes());
+            List<Course> listeCours = Console.Load((String) vue.periode.getValue());
+            vue.tableView.getItems().addAll(listeCours);
             //vue.displayCourses((String) listeCours.get(1), );
         } catch (Exception exception){
 
