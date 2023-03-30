@@ -22,7 +22,6 @@ public class HelloController {
     public void getCourses(){
         try {
             List<Course> listeCours = console.Load(vue.getChoixPeriodes());
-            //vue.displayCourses((String) listeCours.get(1), );
         } catch (Exception exception){
 
         }
