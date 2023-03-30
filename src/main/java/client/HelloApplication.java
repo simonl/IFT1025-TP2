@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -62,6 +63,7 @@ public class HelloApplication extends Application {
         Button envoyer = new Button("envoyer");
         GridPane.setConstraints(envoyer, 1, 4);
 
+
         grilleFormulaire.getChildren().addAll(
                 prenom, champPrenom,
                 nom, champNom,
@@ -92,7 +94,7 @@ public class HelloApplication extends Application {
 
         Label text2 = new Label("Liste de Cours");
         text2.setFont(Font.font("Arial", FontWeight.BOLD, 15));
-        text2.setTextAlignment(TextAlignment.CENTER);
+        //grilleCours.setAlignment(text2, Pos.CENTER);
         GridPane.setConstraints(text2, 0, 0);
 
         TableView tableView = new TableView<String>();
@@ -106,8 +108,10 @@ public class HelloApplication extends Application {
         GridPane grilleBouton = new GridPane();
         ColumnConstraints cButton = new ColumnConstraints();
         cButton.setPercentWidth(50);
+
         Button charger = new Button("Charger");
         GridPane.setConstraints(charger, 1, 0);
+
         //GridPane.setHalignment(charger, HPos.CENTER);
 
         ObservableList<String> periodes =
@@ -119,6 +123,8 @@ public class HelloApplication extends Application {
 
         ComboBox periode = new ComboBox(periodes);
         GridPane.setConstraints(periode,0,0);
+
+        charger.setOnAction(e -> setText(periode));
 
         grilleBouton.getColumnConstraints().add(cButton);
 
@@ -138,9 +144,30 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
 
+
+
+    }
+    String choixPeriodes;
+    TableColumn cours;
+    TableColumn codeCours;
+    public void setText(ComboBox choixPeriode){
+        this.choixPeriodes = (String) choixPeriode.getValue();
     }
 
+    public String getChoixPeriodes() {
+        return choixPeriodes;
+    }
+
+    public void setTableView(TableColumn cours, TableColumn codeCours){
+        this.cours = cours;
+        this.codeCours = codeCours;
+    }
+    public void displayCourses(String codeCours, String cours){
+        this.cours.setCellFactory(new PropertyValueFactory<Console, String>(codeCours));
+    }
+
+
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }
