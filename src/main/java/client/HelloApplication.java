@@ -19,12 +19,19 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import server.models.Course;
+import server.models.RegistrationForm;
 
 
 import java.io.IOException;
 import java.util.List;
 
 public class HelloApplication extends Application {
+    String choixPeriodes;
+    TableView tableView;
+    Button charger, envoyer;
+    ComboBox periode;
+    TextField champPrenom, champNom, champMail, champMatricule;
+
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -47,22 +54,22 @@ public class HelloApplication extends Application {
         Label nom = new Label("Nom");
         GridPane.setConstraints(nom, 0, 1);
 
-        TextField champNom = new TextField();
+        champNom = new TextField();
         GridPane.setConstraints(champNom, 1, 1);
 
         Label mail = new Label("E-mail");
         GridPane.setConstraints(mail, 0, 2);
 
-        TextField champMail = new TextField();
+        champMail = new TextField();
         GridPane.setConstraints(champMail, 1, 2);
 
         Label matricule = new Label("Matricule");
         GridPane.setConstraints(matricule, 0, 3);
 
-        TextField champMatricule = new TextField();
+        champMatricule = new TextField();
         GridPane.setConstraints(champMatricule, 1, 3);
 
-        Button envoyer = new Button("envoyer");
+        envoyer = new Button("envoyer");
         GridPane.setConstraints(envoyer, 1, 4);
 
 
@@ -122,15 +129,12 @@ public class HelloApplication extends Application {
         ObservableList<String> periodes =
                 FXCollections.observableArrayList(
                         "Hiver",
-                        "Été",
+                        "Ete",
                         "Automne"
                 );
 
         periode = new ComboBox(periodes);
-        periode.getItems().add("Hello");
         GridPane.setConstraints(periode,0,0);
-
-        charger.setOnAction(e -> setText(periode));
 
         grilleBouton.getColumnConstraints().add(cButton);
 
@@ -150,42 +154,19 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
 
-
-
-    }
-    String choixPeriodes;
-    TableColumn cours;
-    TableColumn codeCours;
-    TableView tableView;
-    Button charger;
-    ComboBox periode;
-
-    public void setText(ComboBox choixPeriode){
-        this.choixPeriodes = (String) choixPeriode.getValue();
-
-
-        try {
-            List<Course> listeCours = Console.Load((String) periode.getValue());
-            tableView.getItems().clear();
-            tableView.getItems().addAll(listeCours);
-            //vue.displayCourses((String) listeCours.get(1), );
-        } catch (Exception exception){
-
-        }
     }
 
-    public String getChoixPeriodes() {
-        return choixPeriodes;
-    }
 
-    public void setTableView(TableColumn cours, TableColumn codeCours){
-        this.cours = cours;
-        this.codeCours = codeCours;
-    }
-    public void displayCourses(String codeCours, String cours){
-        this.cours.setCellFactory(new PropertyValueFactory<Console, String>(codeCours));
-    }
+    public RegistrationForm getters(){
+        String firstName = champPrenom.getText();
+        String lastName = champNom.getText();
+        String mail = champMail.getText();
+        String indentifier = champMatricule.getText();
+        Course choosedCourse = (Course) tableView.getSelectionModel().getSelectedItem();
+        RegistrationForm registrations = new RegistrationForm(firstName, lastName, mail, indentifier, choosedCourse);
 
+        return registrations;
+    }
 
     public static void main(String[] args) {
         launch(args);

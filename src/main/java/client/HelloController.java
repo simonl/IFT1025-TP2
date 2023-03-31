@@ -2,6 +2,7 @@ package client;
 
 import javafx.application.Application;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import server.Server;
 import server.models.Course;
@@ -11,24 +12,35 @@ import java.util.List;
 
 public class HelloController {
 
-    HelloApplication vue;
-    Console console;
+    HelloApplication view;
+    public HelloController(HelloApplication view) {
+        this.view = view;
+        view.charger.setOnAction(event -> displayCourses(view.periode));
+        view.envoyer.setOnAction(event -> register());
 
-    public HelloController(HelloApplication vue, Console console) {
-        this.vue = vue;
-        this.console = console;
+
     }
+    public void displayCourses(ComboBox choixPeriode){
+        this.view.choixPeriodes = (String) choixPeriode.getValue();
 
-    public void getCourses(){
         try {
-            List<Course> listeCours = console.Load(vue.getChoixPeriodes());
-            //vue.displayCourses((String) listeCours.get(1), );
+            List<Course> listeCours = Console.Load((String) view.periode.getValue());
+            view.tableView.getItems().clear();
+            view.tableView.getItems().addAll(listeCours);
         } catch (Exception exception){
 
         }
-
-
-
     }
+
+    public void register(){
+        try{
+            Console.Register(view.getters());
+        } catch (Exception exception){
+
+        }
+    }
+
+
+
 
 }
