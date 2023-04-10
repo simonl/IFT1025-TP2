@@ -26,11 +26,12 @@ import java.io.IOException;
 import java.util.List;
 
 public class HelloApplication extends Application {
-    String choixPeriodes;
+    //String choixPeriodes;
     TableView tableView;
-    Button charger, envoyer;
+    //Button charger, envoyer;
     ComboBox periode;
     TextField champPrenom, champNom, champMail, champMatricule;
+    HelloController controler;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -69,7 +70,7 @@ public class HelloApplication extends Application {
         champMatricule = new TextField();
         GridPane.setConstraints(champMatricule, 1, 3);
 
-        envoyer = new Button("envoyer");
+        Button envoyer = new Button("envoyer");
         GridPane.setConstraints(envoyer, 1, 4);
 
 
@@ -121,10 +122,8 @@ public class HelloApplication extends Application {
         ColumnConstraints cButton = new ColumnConstraints();
         cButton.setPercentWidth(50);
 
-        charger = new Button("Charger");
+        Button charger = new Button("Charger");
         GridPane.setConstraints(charger, 1, 0);
-
-        //GridPane.setHalignment(charger, HPos.CENTER);
 
         ObservableList<String> periodes =
                 FXCollections.observableArrayList(
@@ -149,13 +148,15 @@ public class HelloApplication extends Application {
         GridPane.setConstraints(grilleInscription, 1, 0);
         grille.getChildren().addAll(grilleCours ,grilleInscription);
 
+
+        charger.setOnAction(event -> controler.displayCourses(periode));
+        envoyer.setOnAction(event -> controler.register());
+
         Scene scene = new Scene(grille, 700, 500);
         stage.setTitle("Inscription UdeM");
         stage.setScene(scene);
         stage.show();
-
     }
-
 
     public RegistrationForm getters(){
         String firstName = champPrenom.getText();

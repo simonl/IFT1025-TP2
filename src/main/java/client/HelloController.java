@@ -6,7 +6,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import server.Server;
 import server.models.Course;
-
+import javafx.fxml.Initializable;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,14 +15,12 @@ public class HelloController {
     HelloApplication view;
     public HelloController(HelloApplication view) {
         this.view = view;
-        view.charger.setOnAction(event -> displayCourses(view.periode));
-        view.envoyer.setOnAction(event -> register());
-
+        //view.charger.setOnAction(event1 -> displayCourses(view.periode));
+        //view.envoyer.setOnAction(event2 -> register());
 
     }
     public void displayCourses(ComboBox choixPeriode){
-        this.view.choixPeriodes = (String) choixPeriode.getValue();
-
+        //String ChoixPeriodes = (String) choixPeriode.getValue();
         try {
             List<Course> listeCours = Console.Load((String) view.periode.getValue());
             view.tableView.getItems().clear();
@@ -34,13 +32,12 @@ public class HelloController {
 
     public void register(){
         try{
-            Console.Register(view.getters());
+            String message = Console.Register(view.getters());
+            System.out.println(message);
         } catch (Exception exception){
 
         }
     }
-
-
 
 
 }
