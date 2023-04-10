@@ -168,8 +168,4 @@ public class HelloApplication extends Application {
 
         return registrations;
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
