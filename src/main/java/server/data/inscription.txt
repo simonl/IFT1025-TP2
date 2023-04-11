@@ -1,5 +1,1 @@
-Automne	IFT1015	122223	````23	   	qwkkke@hfhf
-Hiver	IFT2125	111111	Marabou	Plus dangereux	mara_as@gmail.com
-Ete	IFT2256	123456	vlhrovh	 ljdh oiefh	jcverhvoerh@hiohih
-Hiver	IFT2125	123456	samir	gbian	samirgb@g.ca
-Hiver	IFT2125	123456	samir	gbian	samirgb@1
+Automne	IFT2255	12345678	Michalis	Famelis	mfamelis@iro.umontreal.ca

@@ -50,7 +50,7 @@ public class Database {
         return "Selected course does not exist in the given session!";
     }
 
-    private static void SaveRegistration(RegistrationForm form) throws IOException {
+    private static synchronized void SaveRegistration(RegistrationForm form) throws IOException {
         boolean append = true;
         File database = new File(DATABASE_PATH + "/inscription.txt");
         try (PrintWriter out = new PrintWriter(new FileWriter(database, append))) {
