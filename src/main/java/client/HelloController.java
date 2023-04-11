@@ -39,11 +39,14 @@ public class HelloController {
             RegistrationForm inputs = view.getters();
             String identifier = inputs.getMatricule();
             Course choosedCourse = inputs.getCourse();
-            String message = new String("Le formulaire est invalide.");
             view.errorScreen.setTitle("Erreur");
-            view.errorScreen.setHeaderText(message);
+            view.errorScreen.setHeaderText("Erreur");
 
             try {
+
+                if(inputs.getCourse() == null){
+                    throw new IOException();
+                }
 
                 if (inputs.getEmail().contains("@")){
                     int i = inputs.getEmail().indexOf("@");
@@ -54,7 +57,6 @@ public class HelloController {
                     }
                 } else {
                     throw new Exception();
-
                 }
 
                 Integer.parseInt(identifier);
@@ -69,17 +71,22 @@ public class HelloController {
 
             } catch (ArithmeticException exception){
 
-                view.errorScreen.setContentText("Le matricule est invalide.");
+                view.errorScreen.setContentText("Le formulaire est invalide.\nLe champ 'Matricule' est invalide.");
                 view.errorScreen.show();
 
             } catch (NumberFormatException exception){
 
-                view.errorScreen.setContentText("Le matricule est invalide.");
+                view.errorScreen.setContentText("Le formulaire est invalide.\nLe champ 'Matricule' est invalide.");
+                view.errorScreen.show();
+
+            } catch (IOException exception){
+
+                view.errorScreen.setContentText("Le formulaire est invalide.\nVous devez sélectionner un cours.");
                 view.errorScreen.show();
 
             } catch (Exception exception){
 
-                view.errorScreen.setContentText("L'adresse Email est invalide.");
+                view.errorScreen.setContentText("Le formulaire est invalide.\nLe champ 'Email' est invalide.");
                 view.errorScreen.show();
 
             }
@@ -93,6 +100,10 @@ public class HelloController {
         try {
 
             Console.Register(inputs);
+            view.confirmationScreen.setHeaderText("Message");
+            view.confirmationScreen.setContentText("Félicitation! " + inputs.getNom() + " " + inputs.getPrenom() + " est inscrit(e)\n" +
+                    " avec succès pour le cours " + inputs.getCourse().getCode());
+            view.confirmationScreen.show();
 
         } catch (Exception exception){
 

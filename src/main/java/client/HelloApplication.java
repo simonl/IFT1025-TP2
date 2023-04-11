@@ -34,6 +34,7 @@ public class HelloApplication extends Application {
     ComboBox periode;
     TextField champPrenom, champNom, champMail, champMatricule;
     Alert errorScreen;
+    Alert confirmationScreen;
     HelloController controler;
 
     @Override
@@ -158,6 +159,7 @@ public class HelloApplication extends Application {
         envoyer.setOnAction(event -> controler.validateInputs());
 
         errorScreen = new Alert(Alert.AlertType.ERROR);
+        confirmationScreen = new Alert(Alert.AlertType.INFORMATION);
 
         Scene scene = new Scene(grille, 700, 500);
         stage.setTitle("Inscription UdeM");

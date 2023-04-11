@@ -1,16 +1,5 @@
-Automne	IFT2255	12345678	Michalis	Famelis	mfamelis@iro.umontreal.ca
-Hiver	IFT2125	2323213	Simon	Langlois	sim@mail
-Automne	IFT2255	2053410	Samir	Gbian	sam@udem
-Automne	IFT1227	2053410	Samir	Gbian	sam@udem
-Automne	IFT2255				
-Automne	IFT2255	20250793	samir	gbian	samirgbian@umontreal
-Automne	IFT2255	20250	samir	gbian	samirgbian@umontreal
-Automne	IFT1227				
-Automne	IFT2255	202507	samir	gbian	samirgbian@umontreal.ca
-Automne	IFT2255	202507	samir	gbian	samirgbian@umontreal.ca
-Automne	IFT2255	202507	samir	gbian	samirgbian@umontreal.ca
-Automne	IFT2255	202507	samir	gbian	samirgbian@umontreal.ca
-Automne	IFT2255	202507	samir	gbian	samirgbian@umontreal.ca
-Automne	IFT2255	202507	samir	gbian	samirgbian@umontreal.ca
-Automne	IFT2255	202507	samir	gbian	samirgbian@umontreal.ca
-Automne	IFT2255	123456	Samir	Gbian	samirgbian31@umontreal.ca
+Automne	IFT1015	122223	````23	   	qwkkke@hfhf
+Hiver	IFT2125	111111	Marabou	Plus dangereux	mara_as@gmail.com
+Ete	IFT2256	123456	vlhrovh	 ljdh oiefh	jcverhvoerh@hiohih
+Hiver	IFT2125	123456	samir	gbian	samirgb@g.ca
+Hiver	IFT2125	123456	samir	gbian	samirgb@1
