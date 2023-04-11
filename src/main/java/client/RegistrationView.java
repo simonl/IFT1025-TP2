@@ -1,31 +1,27 @@
 package client;
 
 import javafx.application.Application;
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import server.models.Course;
 import server.models.RegistrationForm;
 
 
 import java.io.IOException;
-import java.util.List;
 
-public class HelloApplication extends Application {
+/**
+ *
+ */
+public class RegistrationView extends Application {
     //String choixPeriodes;
     TableView tableView;
     //Button charger, envoyer;
@@ -35,12 +31,12 @@ public class HelloApplication extends Application {
     TextField champPrenom, champNom, champMail, champMatricule;
     Alert errorScreen;
     Alert confirmationScreen;
-    HelloController controler;
+    RegistrationController controler;
 
     @Override
     public void start(Stage stage) throws IOException {
 
-        controler = new HelloController(this);
+        controler = new RegistrationController(this);
 
         GridPane grille = new GridPane();
 
@@ -64,7 +60,7 @@ public class HelloApplication extends Application {
         champNom = new TextField();
         GridPane.setConstraints(champNom, 1, 1);
 
-        Label mail = new Label("E-mail");
+        Label mail = new Label("Email");
         GridPane.setConstraints(mail, 0, 2);
 
         champMail = new TextField();
