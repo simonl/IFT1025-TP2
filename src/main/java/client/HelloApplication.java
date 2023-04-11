@@ -29,12 +29,17 @@ public class HelloApplication extends Application {
     //String choixPeriodes;
     TableView tableView;
     //Button charger, envoyer;
+    Button charger = new Button("charger");
+    Button envoyer = new Button("envoyer");
     ComboBox periode;
     TextField champPrenom, champNom, champMail, champMatricule;
+    Alert errorScreen;
     HelloController controler;
 
     @Override
     public void start(Stage stage) throws IOException {
+
+        controler = new HelloController(this);
 
         GridPane grille = new GridPane();
 
@@ -49,7 +54,7 @@ public class HelloApplication extends Application {
         Label prenom = new Label("Prénom");
         GridPane.setConstraints(prenom, 0, 0);
 
-        TextField champPrenom = new TextField();
+        champPrenom = new TextField();
         GridPane.setConstraints(champPrenom, 1, 0);
 
         Label nom = new Label("Nom");
@@ -70,7 +75,7 @@ public class HelloApplication extends Application {
         champMatricule = new TextField();
         GridPane.setConstraints(champMatricule, 1, 3);
 
-        Button envoyer = new Button("envoyer");
+        envoyer = new Button("envoyer");
         GridPane.setConstraints(envoyer, 1, 4);
 
 
@@ -122,7 +127,7 @@ public class HelloApplication extends Application {
         ColumnConstraints cButton = new ColumnConstraints();
         cButton.setPercentWidth(50);
 
-        Button charger = new Button("Charger");
+        charger = new Button("Charger");
         GridPane.setConstraints(charger, 1, 0);
 
         ObservableList<String> periodes =
@@ -149,8 +154,10 @@ public class HelloApplication extends Application {
         grille.getChildren().addAll(grilleCours ,grilleInscription);
 
 
-        charger.setOnAction(event -> controler.displayCourses(periode));
-        envoyer.setOnAction(event -> controler.register());
+        charger.setOnAction(event -> controler.displayCourses());
+        envoyer.setOnAction(event -> controler.validateInputs());
+
+        errorScreen = new Alert(Alert.AlertType.ERROR);
 
         Scene scene = new Scene(grille, 700, 500);
         stage.setTitle("Inscription UdeM");
