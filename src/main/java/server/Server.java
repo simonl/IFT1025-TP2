@@ -37,11 +37,20 @@ public class Server {
         while (true) {
             try {
                 Socket client = server.accept();
-                System.out.println("Connecté au client: " + client);
-                try (ObjectSocket channel = new ObjectSocket(client)) {
-                    listen(channel);
-                }
-                System.out.println("Client déconnecté!");
+
+                Thread thread = new Thread(() -> {
+                    try {
+                        System.out.println("Connecté au client: " + client);
+                        try (ObjectSocket channel = new ObjectSocket(client)) {
+                            listen(channel);
+                        }
+                        System.out.println("Client déconnecté!");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                thread.start();
             } catch (Exception e) {
                 e.printStackTrace();
             }
