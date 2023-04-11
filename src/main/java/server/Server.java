@@ -5,8 +5,6 @@ import server.models.Course;
 import server.models.RegistrationForm;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -14,13 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Server {
-
     public final static String REGISTER_COMMAND = "INSCRIRE";
     public final static String LOAD_COMMAND = "CHARGER";
     private final ServerSocket server;
-    private Socket client;
-    private ObjectInputStream objectInputStream;
-    private ObjectOutputStream objectOutputStream;
     private final ArrayList<EventHandler> handlers;
 
     public Server(int port) throws IOException {
@@ -33,21 +27,20 @@ public class Server {
         this.handlers.add(h);
     }
 
-    private void alertHandlers(String cmd, String arg) {
+    private void alertHandlers(Channel client, String cmd, String arg) {
         for (EventHandler h : this.handlers) {
-            h.handle(cmd, arg);
+            h.handle(client, cmd, arg);
         }
     }
 
     public void run() {
         while (true) {
             try {
-                client = server.accept();
+                Socket client = server.accept();
                 System.out.println("Connecté au client: " + client);
-                objectInputStream = new ObjectInputStream(client.getInputStream());
-                objectOutputStream = new ObjectOutputStream(client.getOutputStream());
-                listen();
-                disconnect();
+                try (ObjectSocket channel = new ObjectSocket(client)) {
+                    listen(channel);
+                }
                 System.out.println("Client déconnecté!");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -55,13 +48,13 @@ public class Server {
         }
     }
 
-    public void listen() throws IOException, ClassNotFoundException {
+    public void listen(Channel client) throws Exception {
         String line;
-        if ((line = this.objectInputStream.readObject().toString()) != null) {
+        if ((line = client.<Object>read().toString()) != null) {
             Pair<String, String> parts = processCommandLine(line);
             String cmd = parts.getKey();
             String arg = parts.getValue();
-            this.alertHandlers(cmd, arg);
+            this.alertHandlers(client, cmd, arg);
         }
     }
 
@@ -72,17 +65,11 @@ public class Server {
         return new Pair<>(cmd, args);
     }
 
-    public void disconnect() throws IOException {
-        objectOutputStream.close();
-        objectInputStream.close();
-        client.close();
-    }
-
-    public void handleEvents(String cmd, String arg) {
+    public void handleEvents(Channel client, String cmd, String arg) {
         if (cmd.equals(REGISTER_COMMAND)) {
-            handleRegistration();
+            handleRegistration(client);
         } else if (cmd.equals(LOAD_COMMAND)) {
-            handleLoadCourses(arg);
+            handleLoadCourses(client, arg);
         }
     }
 
@@ -93,11 +80,10 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String arg) {
+    public void handleLoadCourses(Channel client, String arg) {
         try {
             List<Course> courses = Database.loadCourseList(arg);
-            objectOutputStream.writeObject(courses);
-            objectOutputStream.flush();
+            client.write(courses);
         } catch (Exception e) {
             // Abandonner l'opération.
             // Le client ne recevra pas de résultat.
@@ -109,12 +95,11 @@ public class Server {
      et renvoyer un message de confirmation au client.
      La méthode gère les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
-    public void handleRegistration() {
+    public void handleRegistration(Channel client) {
         try {
-            RegistrationForm form = (RegistrationForm) objectInputStream.readObject();
+            RegistrationForm form = client.read();
             String message = Database.registerCourse(form);
-            objectOutputStream.writeObject(message);
-            objectOutputStream.flush();
+            client.write(message);
         } catch (Exception e) {
             // Abandonner l'opération.
             // Le client ne recevra pas de résultat.

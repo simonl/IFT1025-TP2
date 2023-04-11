@@ -2,5 +2,5 @@ package server;
 
 @FunctionalInterface
 public interface EventHandler {
-    void handle(String cmd, String arg);
+    void handle(Channel channel, String cmd, String arg);
 }
