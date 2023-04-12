@@ -1,5 +1,6 @@
 package client;
 
+import server.ObjectSocket;
 import server.Server;
 import server.ServerLauncher;
 import server.models.Course;
@@ -106,25 +107,19 @@ public class Console {
     }
 
     private static Object Request(String command, Object arg) throws Exception {
-        try (Socket client = new Socket("localhost", ServerLauncher.PORT)) {
-            ObjectOutputStream serverOut = new ObjectOutputStream(client.getOutputStream());
-            ObjectInputStream serverIn = new ObjectInputStream(client.getInputStream());
-
+        Socket socket = new Socket("localhost", ServerLauncher.PORT);
+        try (ObjectSocket client = new ObjectSocket(socket)) {
             switch (command) {
                 case Server.LOAD_COMMAND: {
-                    serverOut.writeObject(command + " " + arg);
-                    serverOut.flush();
+                    client.write(command + " " + arg);
 
-                    return serverIn.readObject();
+                    return client.read();
                 }
                 case Server.REGISTER_COMMAND: {
-                    serverOut.writeObject(command);
-                    serverOut.flush();
+                    client.write(command);
+                    client.write(arg);
 
-                    serverOut.writeObject(arg);
-                    serverOut.flush();
-
-                    return serverIn.readObject();
+                    return client.read();
                 }
                 default:
                     throw new IllegalArgumentException(command);

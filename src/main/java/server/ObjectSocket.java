@@ -12,8 +12,13 @@ public class ObjectSocket implements Channel, AutoCloseable {
 
     public ObjectSocket(Socket client) throws IOException {
         this.client = client;
-        this.objectInputStream = new ObjectInputStream(client.getInputStream());
+
+        // Le ObjectOutputStream doit être instancié en premier de chaque côté (client/serveur),
+        // car il écrit un header qui est attendu par le ObjectInputStream de l'autre côté (serveur/client).
         this.objectOutputStream = new ObjectOutputStream(client.getOutputStream());
+        this.objectOutputStream.flush();
+
+        this.objectInputStream = new ObjectInputStream(client.getInputStream());
     }
 
     public <T> T read() throws Exception {
