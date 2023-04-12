@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -96,12 +97,14 @@ public class RegistrationView extends Application {
         GridPane.setConstraints(grilleFormulaire, 0, 1);
 
         grilleInscription.getChildren().addAll(text1, grilleFormulaire);
+        grilleInscription.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 
 //----------------------------------------------------------------------------------------------------------------------
 
        GridPane grilleCours = new GridPane();
        grilleCours.setPadding(new Insets(10,10,10,10));
-       RowConstraints rConst = new RowConstraints();
+        grilleCours.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+        RowConstraints rConst = new RowConstraints();
        rConst.setPercentHeight(0);
 
         Label text2 = new Label("Liste de Cours");
@@ -150,14 +153,14 @@ public class RegistrationView extends Application {
         GridPane.setConstraints(grilleInscription, 1, 0);
         grille.getChildren().addAll(grilleCours ,grilleInscription);
 
-
         charger.setOnAction(event -> controler.displayCourses());
         envoyer.setOnAction(event -> controler.validateInputs());
 
         errorScreen = new Alert(Alert.AlertType.ERROR);
         confirmationScreen = new Alert(Alert.AlertType.INFORMATION);
 
-        Scene scene = new Scene(grille, 700, 500);
+        Scene scene = new Scene(grille, 610, 400);
+        scene.setFill(Color.RED);
         stage.setTitle("Inscription UdeM");
         stage.setScene(scene);
         stage.show();
