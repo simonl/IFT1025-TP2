@@ -96,6 +96,7 @@ public class Server {
         } catch (Exception e) {
             // Abandonner l'opération.
             // Le client ne recevra pas de résultat.
+            e.printStackTrace();
         }
     }
 
@@ -112,6 +113,7 @@ public class Server {
         } catch (Exception e) {
             // Abandonner l'opération.
             // Le client ne recevra pas de résultat.
+            e.printStackTrace();
         }
     }
 }
