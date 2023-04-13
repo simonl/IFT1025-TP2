@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,10 +25,14 @@ import java.io.IOException;
  * Elle ne contient que les éléments graphique du projet.
  */
 public class RegistrationView extends Application {
+    // Tableview contenant la liste des cours.
     TableView tableView;
+    // Boutons charger et envoyer.
     Button loadButton = new Button("charger");
     Button sendButton = new Button("envoyer");
-    ComboBox period;
+    // ComboBox contenant les sessions.
+    ComboBox sessions;
+    // Champs des informations à remplir.
     TextField lastNameField, firstNameField, mailField, identifierField;
 
     // Écran d'erreur et de confirmation d'inscription.
@@ -121,7 +124,7 @@ public class RegistrationView extends Application {
         text2.setTextAlignment(TextAlignment.CENTER);
         GridPane.setConstraints(text2, 0, 0);
 
-        // Table contenant la liste des cours.
+        // Création de la table contenant la liste des cours.
         tableView = new TableView<String>();
         tableView.setEditable(false);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -142,18 +145,18 @@ public class RegistrationView extends Application {
         GridPane.setConstraints(loadButton, 1, 0);
 
         // ComboBox affichant les périodes disponibles.
-        ObservableList<String> periods =
+        ObservableList<String> sessionsList =
                 FXCollections.observableArrayList(
                         "Hiver",
                         "Ete",
                         "Automne"
                 );
-        period = new ComboBox(periods);
-        GridPane.setConstraints(period,0,0);
+        sessions = new ComboBox(sessionsList);
+        GridPane.setConstraints(sessions,0,0);
 
         // Ajout des éléments dans les grilles et fixation des contraintes.
         grilleBouton.getColumnConstraints().add(cButton);
-        grilleBouton.getChildren().addAll(loadButton, period);
+        grilleBouton.getChildren().addAll(loadButton, sessions);
         grilleCours.getRowConstraints().add(rConst);
         grilleCours.getChildren().addAll(text2, tableView, grilleBouton);
         GridPane.setConstraints(grilleBouton, 0,2);
@@ -187,7 +190,7 @@ public class RegistrationView extends Application {
         String indentifier = identifierField.getText();
         Course choosedCourse = (Course) tableView.getSelectionModel().getSelectedItem();
         RegistrationForm registrations = new RegistrationForm(firstName, lastName, mail, indentifier, choosedCourse);
-        
+
         return registrations;
     }
 }
