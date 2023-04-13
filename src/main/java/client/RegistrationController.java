@@ -14,14 +14,14 @@ public class RegistrationController {
     List<Course> coursesList;
     public RegistrationController(RegistrationView view) {
         this.view = view;
-        view.charger.setOnAction(event -> displayCourses());
-        view.envoyer.setOnAction(event -> validateInputs());
+        //view.loadButton.setOnAction(event -> displayCourses());
+        //view.sendButton.setOnAction(event -> validateInputs());
 
     }
 
     public void displayCourses(){
         try {
-            this.coursesList = Console.Load((String) view.periode.getValue());
+            this.coursesList = Console.Load((String) view.period.getValue());
             view.tableView.getItems().clear();
             view.tableView.getItems().addAll(coursesList);
         } catch (Exception exception){
