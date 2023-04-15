@@ -16,7 +16,7 @@ import java.util.List;
 public class RegistrationController {
 
     // Déclaration de la vue.
-    RegistrationView view;
+    private RegistrationView view;
 
     // Variable contenant la liste des cours.
     List<Course> coursesList;
@@ -31,7 +31,7 @@ public class RegistrationController {
     public void displayCourses(){
         try {
             // Récupération de la liste de cours.
-            this.coursesList = Console.Load((String) view.sessions.getValue());
+            this.coursesList = Console.Load(view.getSession());
 
             // Ajout des éléments dans le tableview du GUI.
             view.fillCoursesList(this.coursesList);
@@ -41,8 +41,8 @@ public class RegistrationController {
     }
 
     /**
-     * La méthode validateInputs permet de valider les informations entrée par l'utilisateur.
-     * Elles affiche dans le GUI un méssahe d'erreur si les informations sont érronées ou un méssage de confirmation
+     * La méthode validateInputs permet de valider les informations entrées par l'utilisateur.
+     * Elles affichent dans le GUI un message d'erreur si les informations sont erronées ou un message de confirmation
      * d'inscription si elles sont corrects.
      */
     public void validateInputs(){

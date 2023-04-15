@@ -29,21 +29,21 @@ import java.util.List;
  */
 public class RegistrationView extends Application {
     // Tableview contenant la liste des cours.
-    TableView tableView;
+    private TableView tableView;
     // Boutons charger et envoyer.
-    Button loadButton = new Button("charger");
-    Button sendButton = new Button("envoyer");
+    private Button loadButton = new Button("charger");
+    private Button sendButton = new Button("envoyer");
     // ComboBox contenant les sessions.
-    ComboBox sessions;
+    private ComboBox sessions;
     // Champs des informations à remplir.
-    TextField lastNameField, firstNameField, mailField, identifierField;
+    private TextField lastNameField, firstNameField, mailField, identifierField;
 
     // Écran d'erreur et de confirmation d'inscription.
-    Alert errorScreen;
-    Alert confirmationScreen;
+    private Alert errorScreen;
+    private Alert confirmationScreen;
 
     // Controleur
-    RegistrationController controller;
+    private RegistrationController controller;
 
     /**
      * La méthode start permet d'afficher les éléments de l'interface GUI.
@@ -217,6 +217,15 @@ public class RegistrationView extends Application {
     }
 
     /**
+     * La méthode getSession permet de récupérer la session choisie pour filtrer la liste de cours.
+     * Les sessions sont identifiées par leur nom de saison en texte ("AUTOMNE", "HIVER", "ETE").
+     *
+     * @return La session à laquelle l'étudiant veut s'inscrire
+     */
+    public String getSession() {
+        return (String) this.sessions.getValue();
+    }
+    /**
      * Remplir la liste de cours dans l'interface utilisateur, avec l'information provenant du serveur.
      * La liste sera remplie sur le Thread de l'interface utilisateur au prochain moment possible.
      *
@@ -230,7 +239,8 @@ public class RegistrationView extends Application {
     }
 
     /**
-     * La méthode getters permet de récupérer les informations entrées par l'utilisateur ainsi que le cours choisi.
+     * La méthode getRegistration permet de récupérer les informations entrées par l'utilisateur ainsi que le cours choisi.
+     *
      * @return Retourne un RegistrationForm qui contient des strings des informations que l'utilisateur a entré ainsi
      * que le cours choisi.
      */
