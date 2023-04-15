@@ -10,6 +10,8 @@ import java.util.Scanner;
 
 public class Database {
     public final static String SUCCESS_MESSAGE = "OK";
+    public final static String INVALID_COURSE_MESSAGE = "Le cours choisi est invalide!";
+
     private final static String DATABASE_PATH = "./src/main/java/server/data";
 
     public static List<Course> loadCourseList(String sessionFilter) throws IOException {
@@ -47,7 +49,7 @@ public class Database {
             SaveRegistration(form);
             return SUCCESS_MESSAGE;
         }
-        return "Selected course does not exist in the given session!";
+        return INVALID_COURSE_MESSAGE;
     }
 
     private static synchronized void SaveRegistration(RegistrationForm form) throws IOException {

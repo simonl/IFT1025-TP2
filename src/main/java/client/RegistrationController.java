@@ -1,5 +1,6 @@
 package client;
 
+import server.Database;
 import server.models.Course;
 import server.models.RegistrationForm;
 
@@ -18,8 +19,6 @@ public class RegistrationController {
     // Déclaration de la vue.
     private RegistrationView view;
 
-    // Variable contenant la liste des cours.
-    List<Course> coursesList;
     public RegistrationController(RegistrationView view) {
         this.view = view;
     }
@@ -31,10 +30,10 @@ public class RegistrationController {
     public void displayCourses(){
         try {
             // Récupération de la liste de cours.
-            this.coursesList = Console.Load(view.getSession());
+            List<Course> coursesList = Console.Load(view.getSession());
 
             // Ajout des éléments dans le tableview du GUI.
-            view.fillCoursesList(this.coursesList);
+            view.fillCoursesList(coursesList);
         } catch (Exception error){
             view.showErrors(List.of(error.getMessage()));
         }
@@ -52,8 +51,6 @@ public class RegistrationController {
 
         // Récupération du matricule et du cours choisi par l'utilisateur
         RegistrationForm inputs = view.getRegistration();
-        String identifier = inputs.getMatricule();
-        Course choosedCourse = inputs.getCourse();
 
         // Vérification des entrées de l'utisateur
         try {
@@ -80,6 +77,7 @@ public class RegistrationController {
         }
 
         try {
+            String identifier = inputs.getMatricule();
             Integer.parseInt(identifier);
             if (identifier.length() != 6) {
                 throw new NumberFormatException();
@@ -88,21 +86,12 @@ public class RegistrationController {
             errorList.add("Le champ 'Matricule' est invalide!\n");
         }
 
-        try {
-            if (!coursesList.contains(choosedCourse) && choosedCourse != null){
-                throw new Exception();
-            }
-        } catch (Exception exception){
-            errorList.add("Le cours choisi est invalide!\n");
-        }
-
         // Appel de la méthode register s'il n'y a pas d'erreur. Au cas contraire, afficher l'erreur
         if (errorList.size() == 1){
             register(inputs);
         } else {
             view.showErrors(errorList);
         }
-
     }
 
     /**
@@ -112,11 +101,15 @@ public class RegistrationController {
     public void register(RegistrationForm inputs){
         try {
             // Enrégistrement de l'utilisateur
-            Console.Register(inputs);
+            String message = Console.Register(inputs);
+
+            if (!Database.SUCCESS_MESSAGE.equals(message)) {
+                throw new Exception(message);
+            }
 
             // Affichage du message de confirmation
             view.showConfirmation("Félicitation! " + inputs.getNom() + " " + inputs.getPrenom() + " est inscrit(e)\n" +
-                    "avec succès pour le cours " + inputs.getCourse().getCode());
+                    "avec succès pour le cours " + inputs.getCourse().getCode() + "!");
         } catch (Exception error){
             view.showErrors(List.of(error.getMessage()));
         }
