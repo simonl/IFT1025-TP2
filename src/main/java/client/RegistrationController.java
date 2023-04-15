@@ -34,11 +34,9 @@ public class RegistrationController {
             this.coursesList = Console.Load((String) view.sessions.getValue());
 
             // Ajout des éléments dans le tableview du GUI.
-            view.tableView.getItems().clear();
-            view.tableView.getItems().addAll(coursesList);
-
-        } catch (Exception exception){
-
+            view.fillCoursesList(this.coursesList);
+        } catch (Exception error){
+            view.showErrors(List.of(error.getMessage()));
         }
     }
 
@@ -53,13 +51,9 @@ public class RegistrationController {
         errorList.add("Le formulaire est invalide.\n");
 
         // Récupération du matricule et du cours choisi par l'utilisateur
-        RegistrationForm inputs = view.getters();
+        RegistrationForm inputs = view.getRegistration();
         String identifier = inputs.getMatricule();
         Course choosedCourse = inputs.getCourse();
-
-        // Ajout des titres de la fenêtres d'erreur
-        view.errorScreen.setTitle("Erreur");
-        view.errorScreen.setHeaderText("Erreur");
 
         // Vérification des entrées de l'utisateur
         try {
@@ -106,12 +100,7 @@ public class RegistrationController {
         if (errorList.size() == 1){
             register(inputs);
         } else {
-            String list = "";
-            for(int i = 0; i < errorList.size(); ++i){
-                list += errorList.get(i);
-            }
-            view.errorScreen.setContentText(list);
-            view.errorScreen.show();
+            view.showErrors(errorList);
         }
 
     }
@@ -125,14 +114,11 @@ public class RegistrationController {
             // Enrégistrement de l'utilisateur
             Console.Register(inputs);
 
-            // Affichage du méssage de confirmation
-            view.confirmationScreen.setHeaderText("Message");
-            view.confirmationScreen.setContentText("Félicitation! " + inputs.getNom() + " " + inputs.getPrenom() + " est inscrit(e)\n" +
+            // Affichage du message de confirmation
+            view.showConfirmation("Félicitation! " + inputs.getNom() + " " + inputs.getPrenom() + " est inscrit(e)\n" +
                     "avec succès pour le cours " + inputs.getCourse().getCode());
-            view.confirmationScreen.show();
-
-        } catch (Exception exception){
-
+        } catch (Exception error){
+            view.showErrors(List.of(error.getMessage()));
         }
     }
 

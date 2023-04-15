@@ -20,6 +20,7 @@ import server.models.RegistrationForm;
 
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * La classe RegistrationView représence la classe View dans le model MVC.
@@ -171,7 +172,12 @@ public class RegistrationView extends Application {
         setOnLongAction(sendButton, event -> controller.validateInputs());
 
         errorScreen = new Alert(Alert.AlertType.ERROR);
+        errorScreen.setTitle("Error");
+        errorScreen.setHeaderText("Error");
+
         confirmationScreen = new Alert(Alert.AlertType.INFORMATION);
+        confirmationScreen.setTitle("Message");
+        confirmationScreen.setHeaderText("Message");
 
         Scene scene = new Scene(grille, 610, 400);
         scene.setFill(Color.RED);
@@ -211,11 +217,24 @@ public class RegistrationView extends Application {
     }
 
     /**
+     * Remplir la liste de cours dans l'interface utilisateur, avec l'information provenant du serveur.
+     * La liste sera remplie sur le Thread de l'interface utilisateur au prochain moment possible.
+     *
+     * @param coursesList La liste des cours retrouvés du serveur
+     */
+    public void fillCoursesList(List<Course> coursesList) {
+        Platform.runLater(() -> {
+            tableView.getItems().clear();
+            tableView.getItems().addAll(coursesList);
+        });
+    }
+
+    /**
      * La méthode getters permet de récupérer les informations entrées par l'utilisateur ainsi que le cours choisi.
      * @return Retourne un RegistrationForm qui contient des strings des informations que l'utilisateur a entré ainsi
      * que le cours choisi.
      */
-    public RegistrationForm getters(){
+    public RegistrationForm getRegistration(){
         String firstName = lastNameField.getText();
         String lastName = firstNameField.getText();
         String mail = mailField.getText();
@@ -224,5 +243,37 @@ public class RegistrationView extends Application {
         RegistrationForm registrations = new RegistrationForm(firstName, lastName, mail, indentifier, choosedCourse);
 
         return registrations;
+    }
+
+    /**
+     * Afficher des messages d'erreur dans une boîte de dialogue.
+     * Les messages seront affichés sur le Thread de l'interface utilisateur.
+     *
+     * @param errorList Les messages à afficher
+     */
+    public void showErrors(List<String> errorList) {
+        Platform.runLater(() -> {
+            String list = "";
+            for(int i = 0; i < errorList.size(); ++i){
+                list += errorList.get(i);
+            }
+
+            errorScreen.setContentText(list);
+            errorScreen.show();
+        });
+    }
+
+    /**
+     * Afficher un message de confirmation dans une boîte de dialogue.
+     * Le message sera affiché sur le Thread de l'interface utilisateur.
+     *
+     * @param message Le message à afficher
+     */
+    public void showConfirmation(String message) {
+        // Affichage du méssage de confirmation sur le Thread de l'interface
+        Platform.runLater(() -> {
+            confirmationScreen.setContentText(message);
+            confirmationScreen.show();
+        });
     }
 }
