@@ -88,9 +88,9 @@ public class RegistrationController {
         try {
             Integer.parseInt(identifier);
             if (identifier.length() != 6) {
-                throw new ArithmeticException();
+                throw new NumberFormatException();
             }
-        } catch (ArithmeticException exception){
+        } catch (NumberFormatException exception){
             errorList.add("Le champ 'Matricule' est invalide!\n");
         }
 
@@ -128,7 +128,7 @@ public class RegistrationController {
             // Affichage du méssage de confirmation
             view.confirmationScreen.setHeaderText("Message");
             view.confirmationScreen.setContentText("Félicitation! " + inputs.getNom() + " " + inputs.getPrenom() + " est inscrit(e)\n" +
-                    " avec succès pour le cours " + inputs.getCourse().getCode());
+                    "avec succès pour le cours " + inputs.getCourse().getCode());
             view.confirmationScreen.show();
 
         } catch (Exception exception){
