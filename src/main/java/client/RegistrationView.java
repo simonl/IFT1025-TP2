@@ -5,7 +5,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -51,12 +54,13 @@ public class RegistrationView extends Application {
      * @throws IOException Gère les exceptions liées à une mauvais input ou output.
      */
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
 
         controller = new RegistrationController(this);
 
         // Grille contenant toutes les autres grilles.
         GridPane grille = new GridPane();
+        grille.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 
         // Grille contenant les éléments d'affichage pour la partie correspondant aux champs à compléter.
         GridPane grilleFormulaire = new GridPane();
@@ -102,22 +106,23 @@ public class RegistrationView extends Application {
 
         // Grille permettant l'affichage du titre de la section ainsi que des champs à compléter.
         GridPane grilleInscription = new GridPane();
-        grilleInscription.setPadding(new Insets(10, 10, 100, 100));
+        grilleInscription.setPadding(new Insets(10, 10, 10, 10));
 
         Label text1 = new Label("Formulaire d'inscription");
         text1.setFont(Font.font("Arial", FontWeight.BOLD, 15));
         text1.setTextAlignment(TextAlignment.CENTER);
+        GridPane.setHalignment(text1, HPos.CENTER);
         GridPane.setConstraints(text1, 0, 0);
 
         GridPane.setConstraints(grilleFormulaire, 0, 1);
 
         grilleInscription.getChildren().addAll(text1, grilleFormulaire);
-        grilleInscription.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 
         // Grille contenant les èléments d'affichage pour la section de choix de cours.
        GridPane grilleCours = new GridPane();
-       grilleCours.setPadding(new Insets(10,10,10,10));
-       grilleCours.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+        grilleCours.setPadding(new Insets(10, 10, 10, 10));
+       grilleCours.setHgap(10);
+       grilleCours.setVgap(10);
        RowConstraints rConst = new RowConstraints();
        rConst.setPercentHeight(0);
 
@@ -125,11 +130,13 @@ public class RegistrationView extends Application {
         Label text2 = new Label("Liste de Cours");
         text2.setFont(Font.font("Arial", FontWeight.BOLD, 15));
         text2.setTextAlignment(TextAlignment.CENTER);
+        GridPane.setHalignment(text2, HPos.CENTER);
         GridPane.setConstraints(text2, 0, 0);
 
         // Création de la table contenant la liste des cours.
         tableView = new TableView<String>();
         tableView.setEditable(false);
+        tableView.setPrefHeight(300);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn code = new TableColumn("Code");
         code.setCellValueFactory(new PropertyValueFactory<Course, String>("code"));
@@ -155,6 +162,7 @@ public class RegistrationView extends Application {
                         "Automne"
                 );
         sessions = new ComboBox(sessionsList);
+        GridPane.setHalignment(sessions, HPos.CENTER);
         GridPane.setConstraints(sessions,0,0);
 
         // Ajout des éléments dans les grilles et fixation des contraintes.
@@ -162,6 +170,7 @@ public class RegistrationView extends Application {
         grilleBouton.getChildren().addAll(loadButton, sessions);
         grilleCours.getRowConstraints().add(rConst);
         grilleCours.getChildren().addAll(text2, tableView, grilleBouton);
+
         GridPane.setConstraints(grilleBouton, 0,2);
         GridPane.setConstraints(grilleCours, 0, 0);
         GridPane.setConstraints(grilleInscription, 1, 0);
@@ -179,7 +188,7 @@ public class RegistrationView extends Application {
         confirmationScreen.setTitle("Message");
         confirmationScreen.setHeaderText("Message");
 
-        Scene scene = new Scene(grille, 610, 400);
+        Scene scene = new Scene(grille, 550, 350);
         scene.setFill(Color.RED);
         stage.setTitle("Inscription UdeM");
         stage.setScene(scene);
