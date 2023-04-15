@@ -1,8 +1,10 @@
 package client;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -165,8 +167,8 @@ public class RegistrationView extends Application {
         grille.getChildren().addAll(grilleCours ,grilleInscription);
 
         // EventHandler lorsque l'utilisateur click sur les boutons charger et envoyer.
-        loadButton.setOnAction(event -> controller.displayCourses());
-        sendButton.setOnAction(event -> controller.validateInputs());
+        setOnLongAction(loadButton, event -> controller.displayCourses());
+        setOnLongAction(sendButton, event -> controller.validateInputs());
 
         errorScreen = new Alert(Alert.AlertType.ERROR);
         confirmationScreen = new Alert(Alert.AlertType.INFORMATION);
@@ -176,6 +178,36 @@ public class RegistrationView extends Application {
         stage.setTitle("Inscription UdeM");
         stage.setScene(scene);
         stage.show();
+    }
+
+    /**
+     * Ajouter un EventHandler au click d'un bouton, sans qu'il ne bloque l'interface durant son exécution.
+     *
+     * @param button Le bouton auquel on veut gérer l'événement click.
+     * @param handler Le EventHandler qui peut prendre beaucoup de temps à exécuter.
+     */
+    private static void setOnLongAction(Button button, javafx.event.EventHandler<ActionEvent> handler) {
+        button.setOnAction(event -> {
+            // On empêche l'utilisateur de re-clicker sur le bouton durant l'exécution
+            button.setDisable(true);
+
+            // Exécuter l'événement sur un nouveau Thread pour ne pas bloquer l'interface utilisateur
+            Thread thread = new Thread(() -> {
+                try {
+                    // Cette étape peut prendre beaucoup de temps
+                    handler.handle(event);
+                } catch (Exception error) {
+                    // On ignore les erreurs ici
+                } finally {
+                    Platform.runLater(() -> {
+                        // On permet à l'utilisateur de clicker à nouveau
+                        button.setDisable(false);
+                    });
+                }
+            });
+
+            thread.start();
+        });
     }
 
     /**
