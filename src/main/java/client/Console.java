@@ -15,11 +15,15 @@ import java.util.Scanner;
  * serveur.
  */
 public class Console {
+    /**
+     * Les noms de sessions attendus lorsqu'on charge la liste de cours.
+     */
     public final static String[] SESSIONS = new String[] { "Automne", "Hiver", "Ete" };
 
     /**
      * Cette méthode affiche le méssage de bienvenue dans la console et demande aussi l'input de l'utilisateur.
-     * @param args
+     *
+     * @param args Aucun arguments ne sont attendus sur la ligne de commande
      */
     public static void main(String[] args) {
         // Affichage du méssage de bienvenue
