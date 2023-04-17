@@ -3,7 +3,7 @@ package server.models;
 import java.io.Serializable;
 
 /**
- * Cet enregistrement représente une demande inscription d'un étudiant à un des cours disponibles.
+ * Cet enregistrement représente une demande d'inscription d'un étudiant à un des cours disponibles.
  */
 public class RegistrationForm implements Serializable {
     private String prenom;
@@ -13,13 +13,13 @@ public class RegistrationForm implements Serializable {
     private Course course;
 
     /**
-     * Créer une demande inscription d'un étudiant au cours donné.
+     * Créer une demande d'inscription d'un étudiant au cours donné.
      *
-     * @param prenom Prénom de l'étudiant
-     * @param nom Nom de famille de l'étudiant
-     * @param email Address courriel de l'étudiant
-     * @param matricule Numéro d'identification de l'étudiant
-     * @param course Le cours (d'une session en particulière) auquel inscrire l'étudiant
+     * @param prenom Le prénom de l'étudiant.
+     * @param nom Le nom de famille de l'étudiant.
+     * @param email L'address courriel de l'étudiant.
+     * @param matricule Le numéro d'identification de l'étudiant.
+     * @param course Le cours (d'une session en particulière) auquel inscrire l'étudiant.
      */
     public RegistrationForm(String prenom, String nom, String email, String matricule, Course course) {
         this.prenom = prenom;
@@ -30,7 +30,9 @@ public class RegistrationForm implements Serializable {
     }
 
     /**
-     * @return Le prénom de l'étudiant
+     * Retourne le prénom de l'étudiant.
+     *
+     * @return Le prénom de l'étudiant.
      */
     public String getPrenom() {
         return prenom;
@@ -39,14 +41,16 @@ public class RegistrationForm implements Serializable {
     /**
      * Changer le prénom de l'étudiant.
      *
-     * @return Le nouveau prénom de l'étudiant
+     * @return Le nouveau prénom de l'étudiant.
      */
     public void setPrenom(String prenom) {
         this.prenom = prenom;
     }
 
     /**
-     * @return Le nom de famille de l'étudiant
+     * Retourne le nom de famille de l'étudiant.
+     *
+     * @return Le nom de famille de l'étudiant.
      */
     public String getNom() {
         return nom;
@@ -55,14 +59,16 @@ public class RegistrationForm implements Serializable {
     /**
      * Changer le nom de famille de l'étudiant.
      *
-     * @param nom Le nouveau nom de fammile de l'étudiant
+     * @param nom Le nouveau nom de famille de l'étudiant.
      */
     public void setNom(String nom) {
         this.nom = nom;
     }
 
     /**
-     * @return L'adresse courriel de l'étudiant
+     * Retourne l'adresse courriel de l'étudiant.
+     *
+     * @return L'adresse courriel de l'étudiant.
      */
     public String getEmail() {
         return email;
@@ -71,14 +77,16 @@ public class RegistrationForm implements Serializable {
     /**
      * Changer l'adresse courriel de l'étudiant.
      *
-     * @param email La nouvelle adresse courriel de l'étudiant
+     * @param email La nouvelle adresse courriel de l'étudiant.
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
     /**
-     * @return Le matricule identifiant de l'étudiant
+     * Retourne le matricule identifiant de l'étudiant.
+     *
+     * @return Le matricule identifiant de l'étudiant.
      */
     public String getMatricule() {
         return matricule;
@@ -87,13 +95,15 @@ public class RegistrationForm implements Serializable {
     /**
      * Changer le matricule identifiant de l'étudiant.
      *
-     * @param matricule Le nouveau matricule identifiant de l'étudiant
+     * @param matricule Le nouveau matricule identifiant de l'étudiant.
      */
     public void setMatricule(String matricule) {
         this.matricule = matricule;
     }
 
     /**
+     * Retourne le cours auquel l'étudiant veut s'inscrire.
+     *
      * @return Le cours auquel l'étudiant veut s'inscrire.
      */
     public Course getCourse() {
@@ -101,7 +111,7 @@ public class RegistrationForm implements Serializable {
     }
 
     /**
-     * Changer le cours auquel inscrire l'étudiant
+     * Changer le cours auquel inscrire l'étudiant.
      *
      * @param course Le nouveau cours auquel l'étudiant veut s'inscrire.
      */
