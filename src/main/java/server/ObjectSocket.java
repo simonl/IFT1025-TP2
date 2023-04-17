@@ -47,7 +47,7 @@ public class ObjectSocket implements Channel, AutoCloseable {
      *
      * @param o L'objet qu'on veut transmettre
      * @param <T> Le type de l'objet
-     * @throws Exception Si l'écriture échoue
+     * @throws IOException Si l'écriture échoue
      */
     public <T> void write(T o) throws IOException {
         objectOutputStream.writeObject(o);

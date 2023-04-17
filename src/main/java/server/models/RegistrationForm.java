@@ -41,7 +41,7 @@ public class RegistrationForm implements Serializable {
     /**
      * Changer le prénom de l'étudiant.
      *
-     * @return Le nouveau prénom de l'étudiant.
+     * @param prenom Le nouveau prénom de l'étudiant.
      */
     public void setPrenom(String prenom) {
         this.prenom = prenom;

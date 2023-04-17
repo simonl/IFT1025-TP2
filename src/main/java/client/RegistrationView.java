@@ -51,7 +51,6 @@ public class RegistrationView extends Application {
     /**
      * La méthode start permet d'afficher les éléments de l'interface GUI.
      * @param stage
-     * @throws IOException Gère les exceptions liées à une mauvais input ou output.
      */
     @Override
     public void start(Stage stage) {
