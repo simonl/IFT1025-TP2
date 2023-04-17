@@ -1,0 +1,21 @@
+
+! La partie multi-threading dans la vidéo démo commence à 1m43s.
+! Pour que ce soit plus évident, on a aussi rajouté des Thread.sleep autour des accès aux fichiers.
+
+Côté serveur: (à partir du commit a979f2a1b9a346273617a4830c0f0469904697cc)
+1. On a encapsulé la gestion de la connexion client dans un ObjectSocket.
+   Il remplace les Socket, ObjectInputStream et ObjectOutputStream qui étaient des membres de l'objet Server.
+2. Pour admettre l'exécution de plusieurs requêtes en même temps, on ne peut plus se fier à une seule connexion en scope de l'objet Server.
+   On garde chaque connexion dans le scope de la fonction run, et elle est passée en paramètre à listen, jusqu'aux EventHandlers.
+3. Nos implémentations de handleLoadCourses et handleRegistration utilisent l'ObjectSocket en paramètre pour toute communication.
+4. Au lieu d'appeler listen directement dans la méthode run, on lance un Thread et le serveur recommence à attendre pour le prochain client.
+5. Notre méthode Database.SaveRegistration pour la commande "INSCRIRE", qui accède au fichier d'inscription, doit être "synchronized"
+   pour que plusieurs Threads n'écrivent pas dans le fichier en même temps.
+   La méthode Database.loadCourseList pour la commande "CHARGER" n'a pas besoin de "synchronized" car plusieurs lectures d'un fichier ne font pas interférence.
+
+Côté client: (à partir du commit 2a0a9a706378eb09aa2f93afe3e721eaeed14b14)
+1. Quand un bouton est clické, au lieu d'exécuter directement le EventHandler, on lance un Thread pour le faire.
+2. On désactive le bouton durant l'exécution, et il est réactivé quand le Thread a fini.
+   L'utilisateur peut continuer à utiliser l'interface durant ce temps.
+   Il peut envoyer une commande "CHARGER" et une "INSCRIRE" avant d'avoir à attendre.
+3. Les résultats et messages sont retransmis à l'interface avec Platform.runLater.
