@@ -34,7 +34,7 @@ public class Database {
      * @return La liste des cours disponibles durant la session spécifiée.
      * @throws IOException Si on échoue durant la lecture du fichier contenant la liste de cours.
      */
-    public static List<Course> loadCourseList(String sessionFilter) throws IOException {
+    public static List<Course> loadCourseList(String sessionFilter) throws Exception {
         File database = new File(DATABASE_PATH + "/cours.txt");
         try (Scanner scanner = new Scanner(new FileInputStream(database))) {
             return parseCourseList(scanner, sessionFilter);
@@ -48,9 +48,10 @@ public class Database {
      * @param sessionFilter Le nom de la session d'intérêt au client.
      * @return La liste des cours disponibles durant la session spécifiée.
      */
-    private static List<Course> parseCourseList(Scanner scanner, String sessionFilter) {
+    private static List<Course> parseCourseList(Scanner scanner, String sessionFilter) throws InterruptedException {
         List<Course> courses = new ArrayList<Course>();
         while (scanner.hasNextLine()) {
+            Thread.sleep(1000);
             String line = scanner.nextLine();
             Course course = parseCourse(line);
             // On ignore les cours des autres sessions
@@ -86,7 +87,7 @@ public class Database {
      * @return Un message de confirmation si le cours est valide et l'inscription acceptée.
      * @throws IOException Si on échoue durant l'écriture du fichier des inscriptions.
      */
-    public static String registerCourse(RegistrationForm form) throws IOException {
+    public static String registerCourse(RegistrationForm form) throws Exception {
         if (courseExists(form.getCourse())) {
             SaveRegistration(form);
             return SUCCESS_MESSAGE;
@@ -101,10 +102,11 @@ public class Database {
      * @param form Le formulaire qui identifie l'élève et son cours choisi.
      * @throws IOException Si on échoue durant l'écriture du fichier des inscriptions.
      */
-    private static synchronized void SaveRegistration(RegistrationForm form) throws IOException {
+    private static synchronized void SaveRegistration(RegistrationForm form) throws Exception {
         boolean append = true;
         File database = new File(DATABASE_PATH + "/inscription.txt");
         try (PrintWriter out = new PrintWriter(new FileWriter(database, append))) {
+            Thread.sleep(5000);
             String line = serializeRegistration(form);
             out.println(line);
             out.flush();
@@ -118,7 +120,7 @@ public class Database {
      * @return Si le cours est valide.
      * @throws IOException Si on échoue durant la lecture du fichier contenant la liste de cours.
      */
-    private static boolean courseExists(Course chosenCourse) throws IOException {
+    private static boolean courseExists(Course chosenCourse) throws Exception {
         // On cherche un cours connu avec le même code et durant la même session
         List<Course> availableCourses = loadCourseList(chosenCourse.getSession());
         for (Course availableCourse : availableCourses) {
