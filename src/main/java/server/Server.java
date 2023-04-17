@@ -15,9 +15,22 @@ public class Server {
     public final static String REGISTER_COMMAND = "INSCRIRE";
     public final static String LOAD_COMMAND = "CHARGER";
     private final ServerSocket server;
+    private final ArrayList<EventHandler> handlers;
 
     public Server(int port) throws IOException {
         this.server = new ServerSocket(port, 1);
+        this.handlers = new ArrayList<EventHandler>();
+        this.addEventHandler(this::handleEvents);
+    }
+
+    public void addEventHandler(EventHandler h) {
+        this.handlers.add(h);
+    }
+
+    private void alertHandlers(Channel client, String cmd, String arg) {
+        for (EventHandler h : this.handlers) {
+            h.handle(client, cmd, arg);
+        }
     }
 
     public void run() {
@@ -44,24 +57,24 @@ public class Server {
         }
     }
 
-    public static void listen(Channel client) throws Exception {
+    public void listen(Channel client) throws Exception {
         String line;
         if ((line = client.<String>read()) != null) {
             Pair<String, String> parts = processCommandLine(line);
             String cmd = parts.getKey();
             String arg = parts.getValue();
-            handleEvents(client, cmd, arg);
+            this.alertHandlers(client, cmd, arg);
         }
     }
 
-    public static Pair<String, String> processCommandLine(String line) {
+    public Pair<String, String> processCommandLine(String line) {
         String[] parts = line.split(" ");
         String cmd = parts[0];
         String args = String.join(" ", Arrays.asList(parts).subList(1, parts.length));
         return new Pair<>(cmd, args);
     }
 
-    public static void handleEvents(Channel client, String cmd, String arg) {
+    public void handleEvents(Channel client, String cmd, String arg) {
         if (cmd.equals(REGISTER_COMMAND)) {
             handleRegistration(client);
         } else if (cmd.equals(LOAD_COMMAND)) {
@@ -76,7 +89,7 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public static void handleLoadCourses(Channel client, String arg) {
+    public void handleLoadCourses(Channel client, String arg) {
         try {
             List<Course> courses = Database.loadCourseList(arg);
             client.write(courses);
@@ -92,7 +105,7 @@ public class Server {
      et renvoyer un message de confirmation au client.
      La méthode gère les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
-    public static void handleRegistration(Channel client) {
+    public void handleRegistration(Channel client) {
         try {
             RegistrationForm form = client.read();
             String message = Database.registerCourse(form);
